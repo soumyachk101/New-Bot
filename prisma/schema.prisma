@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  phone     String    @unique
+  name      String?
+  language  String    @default("en")
+  banned    Boolean   @default(false)
+  bannedBy  String?
+  bannedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  messages Message[]
+
+  @@map("users")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  name      String?
+  addedBy   String
+  createdAt DateTime @default(now())
+
+  @@map("admins")
+}
+
+model Group {
+  id         Int      @id @default(autoincrement())
+  waGroupId  String   @unique @map("wa_group_id")
+  name       String?
+  botEnabled Boolean  @default(true) @map("bot_enabled")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("groups")
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  waMsgId     String   @unique @map("wa_msg_id")
+  senderPhone String   @map("sender_phone")
+  groupId     String?  @map("group_id")
+  messageType String   @map("message_type")
+  direction   String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user  User    @relation(fields: [senderPhone], references: [phone])
+  media Media[]
+
+  @@map("messages")
+}
+
+model Broadcast {
+  id           Int       @id @default(autoincrement())
+  message      String
+  language     String    @default("en")
+  createdBy    String    @map("created_by")
+  targetGroups String[]  @map("target_groups")
+  scheduledAt  DateTime? @map("scheduled_at")
+  sentAt       DateTime? @map("sent_at")
+  status       String    @default("pending")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@map("broadcasts")
+}
+
+model Media {
+  id         Int      @id @default(autoincrement())
+  waMediaId  String   @unique @map("wa_media_id")
+  messageId  Int?     @map("message_id")
+  mediaType  String   @map("media_type")
+  mimeType   String?  @map("mime_type")
+  filePath   String?  @map("file_path")
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  message Message? @relation(fields: [messageId], references: [id])
+
+  @@map("media")
+}

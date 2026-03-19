@@ -1,0 +1,12 @@
+{
+  "welcome": "Welcome! How can I help you?",
+  "banned": "You are not allowed to use this service.",
+  "media_received": "I received your {{type}}. Processing...",
+  "tts_error": "Sorry, I could not generate a voice response right now.",
+  "admin_required": "This action requires admin privileges.",
+  "ban_success": "User {{phone}} has been banned.",
+  "unban_success": "User {{phone}} has been unbanned.",
+  "broadcast_queued": "Broadcast scheduled successfully.",
+  "unknown_command": "Sorry, I did not understand that. Please try again.",
+  "language_changed": "Language changed to English."
+}
